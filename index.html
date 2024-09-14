@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Géopolitique</title>
+    <style>
+        body {
+            font-family: 'Mayan', sans-serif;
+            margin: 0;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container, .summary {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-image: url('images/back.jpg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        .choices {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-left: 20%;
+        }
+        .choices li {
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #CC0000;
+        }
+        .summary {
+            display: none;
+        }
+        .summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .summary li {
+            text-align: left;
+            margin-left: 20%;
+            margin-bottom: 10px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .quiz-container, .summary {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .quiz-container, .summary {
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            button {
+                font-size: 12px;
+                padding: 6px 12px;
+                border-radius: 10px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .quiz-container, .summary {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container" id="quiz-container">
+    <h2>QCM ENTRAINEMENT - Chap 1 : Géopolitique</h2>
+    <div id="question-container">
+        <!-- Les questions seront affichées ici dynamiquement -->
+    </div>
+    <button id="next-button" onclick="nextQuestion()">Suivant</button>
+</div>
+
+<div class="summary" id="summary">
+    <h3>Récapitulatif</h3>
+    <ul id="summary-list">
+        <!-- Le récapitulatif des réponses sera affiché ici -->
+    </ul>
+    <div class="score" id="score"></div>
+    <button onclick="restartQuiz()">Recommencer</button>
+</div>
+
+<script>
+    const quizData = [
+        { question: "Qu’est-ce que la géopolitique ?", choices: ["L'étude des relations économiques entre les Etats", "L’analyse des rapports entre espace et politique", "L’observation des conflits militaires", "La science des frontières"], correct: 1 },
+        { question: "Quels sont les éléments constitutifs d’un État ?", choices: ["Une armée, une économie et une monnaie", "Un territoire défini, une population et une autorité capable d’administrer", "Un gouvernement, une monnaie et un système judiciaire", "Un drapeau, un territoire et des ressources"], correct: 1 },
+        { question: "Quel événement marque la fin de l’Empire Napoléonien en 1815?", choices: ["La bataille de Waterloo", "Le Congrès de Vienne", "La signature du Traité de Paris", "La Révolution française"], correct: 1 },
+        { question: "Les traités de paix de 1918-1919 ont principalement contribué à :", choices: ["La fin de l’Empire Ottoman", "La création de l’OTAN", "La réunification de l’Allemagne", "L’émergence de l’Union européenne"], correct: 0 },
+        { question: "Quelles organisations militaires représentaient les deux blocs ?", choices: ["OTAN et Pacte de Varsovie", "ONU et Ligue des Nations", "CEE et COMECON", "Union européenne et OTAN"], correct: 0 },
+        { question: "Quelle période de la Guerre froide est marquée par une détente entre les deux puissances ?", choices: ["1947-1972", "1979-1985", "1963-1979", "1986-1991"], correct: 2 },
+        { question: "Quel événement de la Guerre froide illustre la stratégie de la “coexistence pacifique”?", choices: ["Le blocus de Berlin", "La crise de Cuba", "Les accords SALT I", "L'intervention soviétique en Afghanistan"], correct: 2 },
+        { question: "Quelle réforme de Gorbatchev visait à apporter davantage de transparence en URSS ?", choices: ["Glasnost", "Perestroika", "Détente", "Révolution"], correct: 0 },
+        { question: "Quelle date symbolise la fin officielle de l’URSS ?", choices: ["1989", "1992", "1990", "1991"], correct: 3 },
+        { question: "Quelle république ne faisait pas partie des anciennes républiques soviétiques ?", choices: ["Biélorussie", "Kazakhstan", "Bulgarie", "Estonie"], correct: 2 },
+        { question: "Selon F. Fukuyama, la fin de l’histoire est marquée par :", choices: ["La disparition du communisme", "L’émergence de la démocratie libérale comme système universel", "L’expansion de l’islamisme radical", "La montée des nationalismes"], correct: 1 },
+        { question: "Quel concept décrit une démocratie où les dirigeants élus restreignent les libertés fondamentale ?", choices: ["Le multilatéralisme", "L’illibéralisme", "L’autocratie", "Le totalitarisme"], correct: 1 },
+        { question: "Quel événement est un exemple d'intervention internationale au nom du droit d’ingérence ?", choices: ["La guerre d'Afghanistan en 2001", "L’intervention en Irak en 1991", "La guerre de Yougoslavie", "L’opération Tempete du désert"], correct: 1 },
+        { question: "A propos du terrorisme, quelle est l'affirmation fausse ?", choices: ["Selon The Institute for Economics and Peace, l’Irak, l’Afghanistan et le Nigéria sont les trois pays qui ont subi le plus grand nombre d’attaques terroristes en 2018", "En Syrie et en Irak, la disparition du Califat voulu par l’Organisation de l’Etat islamique signifie la fin de Daech", "Une coalition internationale réunissant des pays comme les USA, la France, l’Arabie saoudite a été créée en 2014 pour lutter contre Daech", "Le Hamas est considéré comme une organisation terroriste par Israël et les pays occidentaux"], correct: 1 },
+        { question: "A propos de l’Iran… Quelle affirmation est fausse ?", choices: ["Ce pays est majoritairement peuplé de sunnites", "C’est un pays qui a des relations très tendues avec l’Arabie Saoudite", "Il est signataire du Traité de non-prolifération nucléaire contrairement à Israël", "Suite à la décision de Donald Trump sur le nucléaire, de nouvelles sanctions économiques ont été décidées contre l’Iran"], correct: 0 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswers = [];
+
+    function loadQuestion() {
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+
+        const questionData = quizData[currentQuestionIndex];
+        const questionElem = document.createElement('div');
+        questionElem.className = 'question';
+        questionElem.textContent = questionData.question;
+
+        const choicesElem = document.createElement('ul');
+        choicesElem.className = 'choices';
+
+        questionData.choices.forEach((choice, index) => {
+            const choiceElem = document.createElement('li');
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'radio';
+            choiceInput.name = 'choice';
+            choiceInput.value = index;
+            choiceInput.id = `choice${index}`;
+            
+            const choiceLabel = document.createElement('label');
+            choiceLabel.htmlFor = `choice${index}`;
+            choiceLabel.textContent = choice;
+
+            choiceElem.appendChild(choiceInput);
+            choiceElem.appendChild(choiceLabel);
+            choicesElem.appendChild(choiceElem);
+        });
+
+        container.appendChild(questionElem);
+        container.appendChild(choicesElem);
+    }
+
+    function nextQuestion() {
+        const selectedChoice = document.querySelector('input[name="choice"]:checked');
+        if (!selectedChoice) {
+            alert("Veuillez sélectionner une réponse !");
+            return;
+        }
+
+        selectedAnswers.push(parseInt(selectedChoice.value));
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+
+        const summaryList = document.getElementById('summary-list');
+        summaryList.innerHTML = '';
+
+        let correctAnswers = 0;
+
+        quizData.forEach((q, index) => {
+            const summaryItem = document.createElement('li');
+            summaryItem.innerHTML = `
+                <strong>${q.question}</strong><br>
+                <div style="text-align: left; margin-left: 20%;">
+                    Votre réponse: ${q.choices[selectedAnswers[index]]} - 
+                    ${selectedAnswers[index] === q.correct ? '<span class="correct">Correct</span>' : '<span class="incorrect">Incorrect</span>'}<br>
+                    Bonne réponse: ${q.choices[q.correct]}
+                </div>
+            `;
+            summaryList.appendChild(summaryItem);
+            if (selectedAnswers[index] === q.correct) {
+                correctAnswers++;
+            }
+        });
+
+        document.getElementById('score').textContent = `Score: ${correctAnswers} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = [];
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
